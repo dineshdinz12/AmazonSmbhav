@@ -28,7 +28,7 @@ const getConnection = async () => {
     port: 25362, // Explicitly define the port
     user: "avnadmin",
     database: "globalxport",
-    password: process.env,MYSQL_PASSWORD,
+    password: process.env.MYSQL_PASSWORD,
     ssl: {
       rejectUnauthorized: false, // Basic SSL validation
     },
