@@ -1,36 +1,232 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 GlobalXport Management System
 
-## Getting Started
+<div align="center">
+  
+![Next.js](https://img.shields.io/badge/Next.js-15.0.3-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-18.2.0-blue?style=for-the-badge&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.7-38B2AC?style=for-the-badge&logo=tailwind-css)
+![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud)
 
-First, run the development server:
+[Live Demo](https://amazon-smbhav-git-main-dineshdinz12s-projects.vercel.app/) | [Documentation](#documentation) | [Features](#features)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+</div>
+
+## 📖 Overview
+
+Our Export Management System is a comprehensive solution designed to streamline international export operations. Built with cutting-edge technologies, it addresses key challenges in the export process including carrier management, documentation compliance, and real-time shipment tracking.
+
+### 🎯 Key Challenges Addressed
+- Coordination with multiple shipping carriers
+- Rate negotiation and optimization
+- International compliance and documentation
+- Real-time shipment tracking
+- Query resolution and issue management
+
+## 📸 Application Screenshots
+
+<div align="center">
+
+### Dashboard products page
+<img src="./public/1.jpg" alt="Dashboard Overview" style="max-width: 800px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+### Logistics Suggestions
+<img src="./public/2.jpg" alt="Shipment Tracking" style="max-width: 800px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+### Demand Suggetions
+<img src="./public/3.jpg" alt="Analytics Dashboard" style="max-width: 800px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+### Document Management & Risk Analyzer
+<img src="./public/4.jpg" alt="Document Management" style="max-width: 800px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+### Logistic partners list
+<img src="./public/5.jpg" alt="Carrier Integration" style="max-width: 800px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+
+
+</div>
+
+## 🛠️ Tech Stack
+
+### Core Technologies
+- **Next.js (v15.0.3)**
+  - Server-side rendering for real-time tracking updates
+  - API routes for carrier integration
+  - Dynamic routing for shipment management
+  - Built-in performance optimization
+
+- **React (v18.2.0)**
+  - Interactive dashboards for shipment tracking
+  - Real-time status updates
+  - Custom hooks for data management
+  - Context API for state management
+
+### UI/UX
+- **Tailwind CSS (v3.4.7)**
+  - Responsive dashboards
+  - Interactive tracking interfaces
+  - Document management UI
+  - Mobile-first design
+
+### Data Visualization
+- **Recharts (v2.13.3)**
+  - Shipment analytics
+  - Cost comparison charts
+  - Performance metrics
+  - Carrier analysis
+
+### AI Integration
+- **Google Generative AI**
+  - Document validation
+  - Compliance checking
+  - Rate optimization
+  
+- **Gemini Flash 1.5**
+  - Predictive analytics for delays
+  - Route optimization
+  - Cost forecasting
+
+### Database
+- **MySQL2 (v3.11.4)**
+  - Shipment tracking
+  - Document management
+  - Carrier information
+  - Compliance data
+
+## ✨ Features
+
+### 🚢 Carrier Management
+```jsx
+// components/CarrierDashboard.js
+const CarrierDashboard = () => {
+  const { carriers, rates } = useCarrierData();
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <CarrierList carriers={carriers} />
+      <RateComparison rates={rates} />
+      <PerformanceMetrics carriers={carriers} />
+    </div>
+  );
+};
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📊 Analytics Dashboard
+```jsx
+import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+const ShipmentAnalytics = ({ data }) => (
+  <LineChart width={600} height={300} data={data}>
+    <Line type="monotone" dataKey="shipmentVolume" stroke="#8884d8" />
+    <Line type="monotone" dataKey="onTimeDelivery" stroke="#82ca9d" />
+    <XAxis dataKey="month" />
+    <YAxis />
+    <Tooltip />
+  </LineChart>
+);
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📄 Document Management
+```javascript
+// lib/document-services.js
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-## Learn More
+export async function validateExportDocuments(documents) {
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  
+  const validation = await model.validateCompliance(documents);
+  return validation.results;
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
+- Node.js (v16.x or above)
+- npm/yarn/pnpm
+- Google Cloud account
+- MySQL database
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
+```bash
+git clone https://github.com/dineshdinz12/AmazonSmbhav.git
+cd AmazonSmbhav
+npm install
+```
 
-## Deploy on Vercel
+### Environment Setup
+```bash
+# .env.local
+NEXT_PUBLIC_GEMINI_API_KEY=your_api_key
+MYSQL_PASSWORD=sql_password
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📚 Project Structure
+```
+export-management/
+├── public/
+│   └── images/
+│
+├── src/
+│   ├── app/
+│   │   ├── analytics/                 # Analytics dashboard
+│   │   ├── api/                       # API routes with SQL integration
+│   │   ├── compliance/                # Compliance management
+│   │   ├── components/                # Shared UI components
+│   │   ├── dashboard/                 # Main dashboard views
+│   │   ├── demand-forecasting/        # Demand prediction system
+│   │   ├── documents/                 # Document management
+│   │   ├── fonts/                     # Custom font assets
+│   │   ├── login/                     # Authentication system
+│   │   ├── logistic-suggestions/      # Logistics optimization
+│   │   ├── orders/                    # Order management
+│   │   ├── products/                  # Product catalog
+│   │   ├── query-resolver/            # Query handling system
+│   │   ├── sales/                     # Sales management
+│   │   ├── settings/                  # Application settings
+│   │   ├── tracking/                  # Shipment tracking
+│   │   ├── users/                     # User management
+│   │   │
+│   │   ├── favicon.ico               # Application favicon
+│   │   ├── globals.css               # Global styles
+│   │   ├── layout.js                 # Root layout component
+│   │   └── page.js                   # Root page component
+│   │
+│   ├── components/                    # Reusable components
+│   │   ├── carriers/                 # Carrier-related components
+│   │   ├── tracking/                 # Tracking components
+│   │   └── compliance/               # Compliance components
+│   │
+│   └── lib/                          # Utility functions
+│       ├── carrier-services.js       # Carrier integration services
+│       └── document-validation.js    # Document validation utilities
+│
+└── README.md                         # Project documentation
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌐 Deployment
+
+Optimized for deployment on Vercel:
+1. Push code to GitHub
+2. Connect to Vercel
+3. Configure environment variables
+4. Deploy!
+
+## 🤝 Contributing
+
+We welcome contributions! See [Contributing Guide](CONTRIBUTING.md).
+
+## 🔗 Useful Links
+- [API Documentation](docs/api.md)
+- [Carrier Integration Guide](docs/carriers.md)
+- [Compliance Documentation](docs/compliance.md)
+
+---
+
+<div align="center">
+  
+Made with ❤️ by INNOVISION
+
+Contributors: <a href="https://github.com/dineshdinz12">Dinesh R</a>, <a href="https://github.com/girish-gaikwad">Girish</a> and <a href="https://github.com/MOHITH2511">Mohit</a>
+
+</div>

@@ -20,6 +20,7 @@ const DocumentAnalyzer = () => {
         'text/plain'
       ];
       
+      
       if (!allowedTypes.includes(selectedFile.type)) {
         setError('Please upload a PDF, DOC, DOCX, or TXT file');
         return;

@@ -1,13 +1,129 @@
-"use client";
+"use client"
 import { useState } from 'react';
-import { Shield, Search, AlertCircle, MessageSquare, Truck, Loader2, MapPin, Clock, DollarSign, BarChart3 } from 'lucide-react';
+import { Shield, Search, AlertCircle, MessageSquare, Truck, Loader2, MapPin, Clock, DollarSign, BarChart3, X, Mail } from 'lucide-react';
+
+// Custom Dialog Components
+const Dialog = ({ open, onClose, children }) => {
+  if (!open) return null;
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative z-50 w-full max-w-lg p-6 bg-gray-800 rounded-xl shadow-xl border border-gray-700">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const DialogHeader = ({ children }) => (
+  <div className="mb-4">{children}</div>
+);
+
+const DialogTitle = ({ children }) => (
+  <div className="text-xl font-semibold text-white flex justify-between items-center">
+    {children}
+  </div>
+);
+
+const DialogDescription = ({ children }) => (
+  <div className="mt-2 text-gray-400">{children}</div>
+);
+
+const DialogFooter = ({ children }) => (
+  <div className="mt-6 flex justify-end gap-3">{children}</div>
+);
+
+const PriceSlider = ({ basePrice, value, onChange }) => {
+  const minPrice = basePrice * 0.7;
+  const maxPrice = basePrice * 1.3;
+  const percentage = ((value - minPrice) / (maxPrice - minPrice)) * 100;
+  
+  const getTrackColor = () => {
+    if (value < basePrice) return 'from-green-500 to-green-400';
+    if (value > basePrice) return 'from-red-500 to-red-400';
+    return 'from-indigo-500 to-indigo-400';
+  };
+
+  return (
+    <div className="my-6">
+      <div className="flex justify-between mb-2">
+        <span className="text-gray-400">Proposed Price per kg</span>
+        <span className={`font-medium ${
+          value < basePrice ? 'text-green-400' : 
+          value > basePrice ? 'text-red-400' : 
+          'text-indigo-400'
+        }`}>
+          ${value.toFixed(2)}
+        </span>
+      </div>
+      
+      <div className="relative h-2 bg-gray-700 rounded-full">
+        <div
+          className={`absolute h-full rounded-full bg-gradient-to-r ${getTrackColor()}`}
+          style={{ width: `${percentage}%`, transition: 'width 0.3s ease, background-color 0.3s ease' }}
+        />
+        <input
+          type="range"
+          min={minPrice}
+          max={maxPrice}
+          step={0.01}
+          value={value}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="absolute w-full h-full opacity-0 cursor-pointer"
+        />
+      </div>
+      
+      <div className="flex justify-between mt-1 text-sm text-gray-500">
+        <span>${minPrice.toFixed(2)}</span>
+        <div className="relative">
+          <div className="absolute -top-1 w-px h-2 bg-gray-600 left-1/2 -translate-x-1/2" />
+          <span className="text-gray-400">${basePrice.toFixed(2)}</span>
+        </div>
+        <span>${maxPrice.toFixed(2)}</span>
+      </div>
+    </div>
+  );
+};
+
+
+// Toast Component
+const Toast = ({ message, show, onClose }) => {
+  if (!show) return null;
+
+  return (
+    <div className="fixed top-4 right-5 z-50 animate-slide-up">
+      <div className="flex items-center gap-2 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg">
+        <Mail size={20} />
+        <span>{message}</span>
+        <button 
+          onClick={onClose} 
+          className="ml-2 hover:text-green-200"
+        >
+          <X size={16} />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default function LogisticsPage() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isNegotiateOpen, setIsNegotiateOpen] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState(null);
+  const [negotiateMessage, setNegotiateMessage] = useState('');
+  const [proposedPrice, setProposedPrice] = useState(0);
+  const [showToast, setShowToast] = useState(false);
 
+
+
+  
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -56,6 +172,22 @@ export default function LogisticsPage() {
     if (form) {
       form.requestSubmit();
     }
+  };
+
+  const handleNegotiate = (partner) => {
+    setSelectedPartner(partner);
+    setProposedPrice(partner.base_rate_per_kg);
+    setIsNegotiateOpen(true);
+  };
+
+  const handleNegotiateSubmit = async () => {
+    // Here you would typically send the negotiation message to your backend
+    console.log('Negotiating with partner:', selectedPartner, 'Message:', negotiateMessage);
+    setIsNegotiateOpen(false);
+    setNegotiateMessage('');
+    setShowToast(true);
+    // Auto-hide toast after 3 seconds
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   const formatCurrency = (value) => {
@@ -210,7 +342,7 @@ export default function LogisticsPage() {
 
                   <div className="flex justify-end">
                     <button
-                      onClick={() => handleNegotiate(partner.id)}
+                      onClick={() => handleNegotiate(partner)}
                       className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors"
                     >
                       <MessageSquare size={18} />
@@ -226,6 +358,63 @@ export default function LogisticsPage() {
             )}
           </div>
         )}
+
+        {/* Negotiate Dialog */}
+        <Dialog open={isNegotiateOpen} onClose={() => setIsNegotiateOpen(false)}>
+    <DialogHeader>
+      <DialogTitle>
+        <span>Negotiate with {selectedPartner?.partner_name}</span>
+        <button 
+          onClick={() => setIsNegotiateOpen(false)}
+          className="text-gray-400 hover:text-white transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </DialogTitle>
+      <DialogDescription>
+        Adjust the price and send a message to start negotiations.
+      </DialogDescription>
+    </DialogHeader>
+    
+    {selectedPartner && (
+      <PriceSlider
+        basePrice={selectedPartner.base_rate_per_kg}
+        value={proposedPrice}
+        onChange={setProposedPrice}
+      />
+    )}
+    
+    <textarea
+      value={negotiateMessage}
+      onChange={(e) => setNegotiateMessage(e.target.value)}
+      placeholder="Enter your message here..."
+      className="w-full mt-4 px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-h-[120px]"
+    />
+    
+    <DialogFooter>
+      <button
+        onClick={() => setIsNegotiateOpen(false)}
+        className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        onClick={handleNegotiateSubmit}
+        disabled={!negotiateMessage.trim()}
+        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
+      >
+        Send Message
+      </button>
+    </DialogFooter>
+  </Dialog>
+
+
+  <Toast 
+        message="Message sent via mail"
+        show={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
       </div>
     </div>
   );
